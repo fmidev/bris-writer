@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bris-writer"
+version = "0.1.0"
+description = "Transer data from/to s3 bucket"
+authors = [{ name = "Ossi Laine", email = "ossi.laine@fmi.fi" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = ["fsspec", "s3fs", "zarr"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+writer = "writer.main:main"
