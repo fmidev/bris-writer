@@ -10,7 +10,7 @@ authors = [{ name = "Ossi Laine", email = "ossi.laine@fmi.fi" }]
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
-dependencies = ["fsspec", "s3fs", "zarr"]
+dependencies = ["fsspec", "s3fs", "zarr", "xarray", "netcdf4"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

@@ -125,11 +125,13 @@ def main():
     )
     parser.add_argument(
         "--coords",
-        required=False,
+        action="store_true",
         help="Override lat/lon with custom values from a .nc file",
     )
     parser.add_argument("--endpoint", default="https://lake.fmi.fi")
     args = parser.parse_args()
+
+    print(args.coords)
 
     if args.src.startswith("s3"):
         load_zarr(args.src, args.dest, args.endpoint)
@@ -139,7 +141,7 @@ def main():
         # two local files
         concat(args.src, args.dest)
     elif args.coords and "zarr" in args.dest:
-        override_coords(args.coords, args.dest)
+        override_coords(args.src, args.dest)
 
 
 if __name__ == "__main__":
