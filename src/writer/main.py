@@ -82,6 +82,33 @@ def concat(first, second):
     update_meta(dest, frequency=6, start_date=src.attrs["start_date"])
 
 
+def override_coords(coords_file, dest):
+    """Override lat/lon coordinates in the zarr file with custom values from a .nc file."""
+    import xarray as xr
+
+    # Load coordinates from .nc file
+    coords = xr.open_dataset(coords_file)
+
+    lon = coords.lon.values
+    lat = coords.lat.values
+
+    # Open destination zarr file
+    zarr_dest = zarr.open(dest, mode="r+")
+
+    # Update latitudes and longitudes
+    if "latitudes" in zarr_dest:
+        zarr_dest["latitudes"][:] = lat
+        print(f"Updated latitudes in {dest}")
+    else:
+        print("No 'latitudes' dataset found in the zarr file.")
+
+    if "longitudes" in zarr_dest:
+        zarr_dest["longitudes"][:] = lon
+        print(f"Updated longitudes in {dest}")
+    else:
+        print("No 'longitudes' dataset found in the zarr file.")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Read Zarr files from S3, concatenate them by dates and write single files to S3"
@@ -96,6 +123,11 @@ def main():
         required=True,
         help="The destination path (e.g., s3://bucket-name/path/to/file.txt)",
     )
+    parser.add_argument(
+        "--coords",
+        required=False,
+        help="Override lat/lon with custom values from a .nc file",
+    )
     parser.add_argument("--endpoint", default="https://lake.fmi.fi")
     args = parser.parse_args()
 
@@ -106,6 +138,8 @@ def main():
     elif "zarr" in args.src and "zarr" in args.dest:
         # two local files
         concat(args.src, args.dest)
+    elif args.coords and "zarr" in args.dest:
+        override_coords(args.coords, args.dest)
 
 
 if __name__ == "__main__":
